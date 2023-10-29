@@ -5,6 +5,7 @@ from PIL import Image
 from termcolor import colored
 import sys
 import argparse
+import urllib.request
 
 
 def save_cursor():
@@ -26,6 +27,13 @@ def show_cursor():
 def clear_screen():
     sys.stdout.write("\x1b[2J")
     sys.stdout.write("\x1b[H")
+
+
+def save_floppa_gif():
+    file_url = "https://media.tenor.com/RFmgfvXWOsAAAAAd/floppa-big-floppa.gif"
+    destination_path = "floppa.gif"
+    urllib.request.urlretrieve(file_url, destination_path)
+    return destination_path
 
 
 def pixel_to_ascii_color_256(pixel):
@@ -85,14 +93,14 @@ if __name__ == "__main__":
         description="Convert video to ASCII art and play it in the terminal."
     )
     parser.add_argument(
-        "-i", "--input", help="Input video or image file path", required=True
+        "-i", "--input", help="Input video or image file path", default=""
     )
     parser.add_argument(
-        "-o", "--output", help="Output ASCII art file path", default="ouput.txt"
+        "-o", "--output", help="Output ASCII art file path", default="output.txt"
     )
     parser.add_argument(
         "-d",
-        "--dimensions",
+        "--dims",
         help="Output dimensions (e.g., '100x32')",
         default="100x32",
     )
@@ -102,10 +110,21 @@ if __name__ == "__main__":
         default=27,
         help="Frame rate for playing ASCII art video (default: 27)",
     )
+    parser.add_argument(
+        "--example",
+        action="store_true",
+        help="Run example",
+    )
 
     args = parser.parse_args()
 
-    input_file = args.input
+    input_file = save_floppa_gif() if args.example else args.input
+    if input_file == "":
+        print(
+            "Please provide an input file path: [-i --input] <file_path>. \n Example usage is: python3 main.py -i floppa.gif",
+            file=sys.stderr,
+        )
+        exit(1)
     output_file = args.output
     frame_rate = args.frame_rate
 
