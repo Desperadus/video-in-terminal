@@ -4,6 +4,7 @@ import time
 from PIL import Image
 from termcolor import colored
 import sys
+import argparse
 
 
 def save_cursor():
@@ -65,17 +66,52 @@ def play_ascii_video_framerate(file_path, frame_rate=1):
     save_cursor()
     hide_cursor()
     clear_screen()
-    with open(file_path, "r") as file:
-        frames = file.read().split("\n\n")
-        for frame in frames:
-            os.system("clear")
-            print(frame, end="")
-            time.sleep(1 / frame_rate)
+    try:
+        with open(file_path, "r") as file:
+            frames = file.read().split("\n\n")
+            for frame in frames:
+                os.system("clear")
+                print(frame, end="")
+                time.sleep(1 / frame_rate)
+    except KeyboardInterrupt:
+        restore_cursor()
+        show_cursor()
     restore_cursor()
     show_cursor()
 
 
 if __name__ == "__main__":
-    video_to_ascii_256("floppa_teeth.gif", "output.txt", 100, 32)
+    parser = argparse.ArgumentParser(
+        description="Convert video to ASCII art and play it in the terminal."
+    )
+    parser.add_argument(
+        "-i", "--input", help="Input video or image file path", required=True
+    )
+    parser.add_argument(
+        "-o", "--output", help="Output ASCII art file path", default="ouput.txt"
+    )
+    parser.add_argument(
+        "-d",
+        "--dimensions",
+        help="Output dimensions (e.g., '100x32')",
+        default="100x32",
+    )
+    parser.add_argument(
+        "--frame_rate",
+        type=int,
+        default=27,
+        help="Frame rate for playing ASCII art video (default: 27)",
+    )
 
-    play_ascii_video_framerate("output.txt", frame_rate=10)
+    args = parser.parse_args()
+
+    input_file = args.input
+    output_file = args.output
+    frame_rate = args.frame_rate
+
+    dimensions = args.dimensions.split("x")
+    width = int(dimensions[0])
+    height = int(dimensions[1])
+
+    video_to_ascii_256(input_file, output_file, width, height)
+    play_ascii_video_framerate(output_file, frame_rate)
