@@ -128,7 +128,7 @@ if __name__ == "__main__":
     output_file = args.output
     frame_rate = args.frame_rate
 
-    dimensions = args.dimensions.split("x")
+    dimensions = args.dims.split("x")
     width = int(dimensions[0])
     height = int(dimensions[1])
 
