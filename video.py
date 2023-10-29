@@ -1,13 +1,35 @@
 import cv2
+import os
 import time
 from PIL import Image
 from termcolor import colored
+import sys
+
+
+def save_cursor():
+    sys.stdout.write("\x1b[s")
+
+
+def restore_cursor():
+    sys.stdout.write("\x1b[u")
+
+
+def hide_cursor():
+    sys.stdout.write("\x1b[?25l")
+
+
+def show_cursor():
+    sys.stdout.write("\x1b[?25h")
+
+
+def clear_screen():
+    sys.stdout.write("\x1b[2J")
+    sys.stdout.write("\x1b[H")
 
 
 def pixel_to_ascii_color_256(pixel):
     ascii_chars = "@%#*+=-:. "
     r, g, b = pixel
-    # Convert RGB to ANSI 256-color code
     ansi_code = 16 + (r // 51) * 36 + (g // 51) * 6 + (b // 51)
     brightness = int((r + g + b) / 3)
     ascii_char = ascii_chars[int(brightness / 32)]
@@ -26,9 +48,6 @@ def image_to_ascii_256(image_path, width, height):
     return ascii_str
 
 
-# Function to extract frames from video and convert them to colored ASCII
-
-
 def video_to_ascii_256(video_path, output_path, width, height):
     vidcap = cv2.VideoCapture(video_path)
     success, image = vidcap.read()
@@ -39,22 +58,24 @@ def video_to_ascii_256(video_path, output_path, width, height):
         success, image = vidcap.read()
     with open(output_path, "w") as output_file:
         output_file.write("\n\n".join(frames))
-
-
-# Function to play ASCII video in terminal with frame rate control
+        os.remove("frame.jpg")
 
 
 def play_ascii_video_framerate(file_path, frame_rate=1):
+    save_cursor()
+    hide_cursor()
+    clear_screen()
     with open(file_path, "r") as file:
-        # Assume each frame is separated by two newlines
         frames = file.read().split("\n\n")
         for frame in frames:
-            print(frame)
+            os.system("clear")
+            print(frame, end="")
             time.sleep(1 / frame_rate)
+    restore_cursor()
+    show_cursor()
 
 
-# Convert video to colored ASCII
-video_to_ascii_256("floppa-ears.gif", "output.txt", 100, 40)
+if __name__ == "__main__":
+    video_to_ascii_256("floppa_teeth.gif", "output.txt", 100, 32)
 
-# Play colored ASCII video in terminal at 1 FPS
-play_ascii_video_framerate("output.txt", frame_rate=10)
+    play_ascii_video_framerate("output.txt", frame_rate=10)
