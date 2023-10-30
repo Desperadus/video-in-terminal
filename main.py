@@ -57,9 +57,15 @@ def video_to_ascii_256(video_path, output_path, width, height):
     vidcap = cv2.VideoCapture(video_path)
     success, image = vidcap.read()
     frames = []
+    first = True
     while success:
         cv2.imwrite("frame.jpg", image)
-        frames.append(image_to_ascii_256_optimized("frame.jpg", width, height))
+        frames.append(
+            "[s[?25l" +
+            image_to_ascii_256_optimized2("frame.jpg", width, height)
+            if first
+            else image_to_ascii_256_optimized2("frame.jpg", width, height)
+        )
         success, image = vidcap.read()
     with open(output_path, "w") as output_file:
         output_file.write("\n\n".join(frames))
@@ -74,8 +80,8 @@ def play_ascii_video_framerate(file_path, frame_rate=1):
         with open(file_path, "r") as file:
             frames = file.read().split("\n\n")
             for frame in frames:
-                os.system("clear")
-                print(frame, end="")
+                # os.system("clear")
+                sys.stdout.write(frame)
                 time.sleep(1 / frame_rate)
     except KeyboardInterrupt:
         restore_cursor()
@@ -110,7 +116,42 @@ def image_to_ascii_256_optimized(image_path, width, height):
                 last_ansi_code = ansi_code
 
         if run_length > 0:
-            ascii_str += f"{' ' * run_length}\033[m"
+            ascii_str += f"{' ' * run_length}\033[0m"
+        run_length = 0
+        last_ansi_code = None
+        ascii_str += "\n"
+
+    return ascii_str
+
+
+def image_to_ascii_256_optimized2(image_path, width, height):
+    image = Image.open(image_path)
+    image = image.resize((width, height))
+
+    ascii_str = ""  # Initialize terminal
+    last_ansi_code = None
+    run_length = 0
+
+    for y in range(height):
+        if y % height == 0:
+            ascii_str += "\033[H"
+        for x in range(width):
+            pixel = image.getpixel((x, y))
+            r, g, b = pixel
+            ansi_code = 16 + (r // 51) * 36 + (g // 51) * 6 + (b // 51)
+            ascii_char = " "
+
+            if last_ansi_code == ansi_code:
+                run_length += 1
+            else:
+                if run_length > 0:
+                    ascii_str += f"{' ' * run_length}"
+                ascii_str += f"\033[48;5;{ansi_code}m"
+                run_length = 1
+                last_ansi_code = ansi_code
+
+        if run_length > 0:
+            ascii_str += f"{' ' * run_length}\033[0m"
         run_length = 0
         last_ansi_code = None
         ascii_str += "\n"

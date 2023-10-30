@@ -51,10 +51,6 @@ python3 main.py -i example.mp4 -o output.txt --dims 100x32 --frame_rate 27
 python3 main.py --example
 ```
 
-## Problems
-
-Video playing feels jittery, needs fixing. Feel free to open an issue if you have any ideas or create pull request.
-
 ## Contribution
 
 Feel free to open issues or pull requests if you want to contribute to this project.
