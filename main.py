@@ -37,13 +37,9 @@ def save_floppa_gif():
 
 
 def pixel_to_ascii_color_256(pixel):
-    ascii_chars = "@%#*+=-:. "
     r, g, b = pixel
     ansi_code = 16 + (r // 51) * 36 + (g // 51) * 6 + (b // 51)
-    brightness = int((r + g + b) / 3)
-    ascii_char = ascii_chars[int(brightness / 32)]
-    ascii_char = " "
-    return f"\033[48;5;{ansi_code}m{ascii_char}\033[m"
+    return f"\033[48;5;{ansi_code}m \033[m"
 
 
 def image_to_ascii_256(image_path, width, height):
@@ -63,7 +59,7 @@ def video_to_ascii_256(video_path, output_path, width, height):
     frames = []
     while success:
         cv2.imwrite("frame.jpg", image)
-        frames.append(image_to_ascii_256("frame.jpg", width, height))
+        frames.append(image_to_ascii_256_optimized("frame.jpg", width, height))
         success, image = vidcap.read()
     with open(output_path, "w") as output_file:
         output_file.write("\n\n".join(frames))
@@ -86,6 +82,40 @@ def play_ascii_video_framerate(file_path, frame_rate=1):
         show_cursor()
     restore_cursor()
     show_cursor()
+
+
+def image_to_ascii_256_optimized(image_path, width, height):
+    image = Image.open(image_path)
+    image = image.resize((width, height))
+
+    ascii_str = ""
+    last_ansi_code = None
+    run_length = 0
+
+    for y in range(height):
+        for x in range(width):
+            pixel = image.getpixel((x, y))
+            r, g, b = pixel
+            ansi_code = 16 + (r // 51) * 36 + (g // 51) * 6 + (b // 51)
+            brightness = int((r + g + b) / 3)
+            ascii_char = " "  # A single space as the ASCII character
+
+            if last_ansi_code == ansi_code:
+                run_length += 1
+            else:
+                if run_length > 0:
+                    ascii_str += f"{' ' * run_length}"
+                ascii_str += f"\033[48;5;{ansi_code}m"
+                run_length = 1
+                last_ansi_code = ansi_code
+
+        if run_length > 0:
+            ascii_str += f"{' ' * run_length}\033[m"
+        run_length = 0
+        last_ansi_code = None
+        ascii_str += "\n"
+
+    return ascii_str
 
 
 if __name__ == "__main__":
