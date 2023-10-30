@@ -15,4 +15,4 @@ if len(sys.argv) >= 3:
     frame_rate = int(sys.argv[2])
 
 # Call the function with the provided input file and frame rate
-play_ascii_video_framerate(input_file, frame_rate)
+play_ascii_video_framerate(input_file, frame_rate, True)
