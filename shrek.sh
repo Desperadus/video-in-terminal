@@ -23,7 +23,7 @@ def restore_cursor():
 def show_cursor():
     sys.stdout.write("\\033[?25h")
 
-def play_ascii_video_framerate(frame_rate=27, loop=True):
+def play_ascii_video_framerate(frame_rate=20, loop=True):
     save_cursor()
     hide_cursor()
     clear_screen()
