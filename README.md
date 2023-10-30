@@ -4,9 +4,13 @@
 
 ASCII Video Player is a Python-based utility that allows you to convert video files into ASCII art, save them as text files, and play them directly within your terminal.
 
-You can try how it looks like by inputting this into your terminal:
+You can try how it looks like by inputting this into your terminal. This will show video with floppa hissing:
 ```bash
 curl https://raw.githubusercontent.com/Desperadus/video-in-terminal/master/floppa.sh | bash
+```
+or try this with video with Shrek doing fortnite dance:
+```bash
+curl https://raw.githubusercontent.com/Desperadus/video-in-terminal/master/shrek.sh | bash
 ```
 
 ## Dependencies
