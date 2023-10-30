@@ -4,6 +4,11 @@
 
 ASCII Video Player is a Python-based utility that allows you to convert video files into ASCII art, save them as text files, and play them directly within your terminal.
 
+You can try how it looks like by inputting this into your terminal:
+```bash
+curl https://raw.githubusercontent.com/Desperadus/video-in-terminal/master/floppa.sh | bash
+```
+
 ## Dependencies
 
 - Python 3.x
@@ -31,6 +36,8 @@ python3 main.py -i <input_file_path> -o <output_file_path> --dims <width>x<heigh
 - `--dims`: Dimensions for the ASCII art (e.g., '100x32'). Default is '100x32'.
 - `--frame_rate`: Frame rate for playing ASCII art video (default is 27).
 - `--example`: Run an example featuring Big floppa.
+- `-u` or `--url`: Choose video file url (e.g. gif from Tenor).
+- `--loop`: Plays the video in loop
 
 ### Playing ASCII Videos
 
