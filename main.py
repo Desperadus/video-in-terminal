@@ -36,6 +36,13 @@ def save_floppa_gif():
     return destination_path
 
 
+def save_video_from_url(url):
+    file_url = url
+    destination_path = "video." + url.split(".")[-1]
+    urllib.request.urlretrieve(file_url, destination_path)
+    return destination_path
+
+
 def pixel_to_ascii_color_256(pixel):
     r, g, b = pixel
     ansi_code = 16 + (r // 51) * 36 + (g // 51) * 6 + (b // 51)
@@ -187,9 +194,19 @@ if __name__ == "__main__":
         help="Run example",
     )
 
+    parser.add_argument(
+        "-u",
+        "--url",
+        type=str,
+        default="",
+        help="Url to video",
+    )
     args = parser.parse_args()
 
-    input_file = save_floppa_gif() if args.example else args.input
+    if args.url != "":
+        input_file = save_video_from_url(args.url)
+    else:
+        input_file = save_floppa_gif() if args.example else args.input
     if input_file == "":
         print(
             "Please provide an input file path: [-i --input] <file_path>. \n Example usage is: python3 main.py -i floppa.gif",
