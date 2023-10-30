@@ -68,7 +68,8 @@ def video_to_ascii_256(video_path, output_path, width, height):
     while success:
         cv2.imwrite("frame.jpg", image)
         frames.append(
-            "[s[?25l" + image_to_ascii_256_optimized2("frame.jpg", width, height)
+            "[s[?25l" +
+            image_to_ascii_256_optimized2("frame.jpg", width, height)
             if first
             else image_to_ascii_256_optimized2("frame.jpg", width, height)
         )
@@ -83,20 +84,15 @@ def play_ascii_video_framerate(file_path, frame_rate=27, loop=False):
     hide_cursor()
     clear_screen()
     try:
-        if loop:
-            while True:
-                with open(file_path, "r") as file:
-                    frames = file.read().split("\n\n")
-                    for frame in frames:
-                        # os.system("clear")
-                        sys.stdout.write(frame)
-                        time.sleep(1 / frame_rate)
-        with open(file_path, "r") as file:
-            frames = file.read().split("\n\n")
-            for frame in frames:
-                # os.system("clear")
-                sys.stdout.write(frame)
-                time.sleep(1 / frame_rate)
+        while True:
+            with open(file_path, "r") as file:
+                frames = file.read().split("\n\n")
+                for frame in frames:
+                    # os.system("clear")
+                    sys.stdout.write(frame)
+                    time.sleep(1 / frame_rate)
+            if not loop:
+                break
     except KeyboardInterrupt:
         restore_cursor()
         show_cursor()
